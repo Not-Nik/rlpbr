@@ -10,6 +10,7 @@
 #include "rlpbr.h"
 
 int main() {
+    SetTraceLogLevel(LOG_WARNING);
     SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT);
     InitWindow(1080, 720, "raylib pbr");
     InitPBR();
@@ -32,9 +33,7 @@ int main() {
                                           TEXTURE_FILTER_ANISOTROPIC_16X);
 
     AddLight((Light) {
-        .pos = (Vector3) { 0, 1, 3 },
-        .color = WHITE,
-        .intensity = 20
+        .pos = (Vector3) {0, 1, 3}, .color = WHITE, .intensity = 20
     });
 
     while (!WindowShouldClose()) {

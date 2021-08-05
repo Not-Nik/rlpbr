@@ -42,10 +42,10 @@ void InitPBR() {
     pbr_shader.locs[SHADER_LOC_MAP_ROUGHNESS] = GetShaderLocation(pbr_shader, "roughnessMap");
     pbr_shader.locs[SHADER_LOC_MAP_OCCLUSION] = GetShaderLocation(pbr_shader, "aoMap");
 
-    pbr_shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(pbr_shader, "model");
-    pbr_shader.locs[SHADER_LOC_MATRIX_VIEW] = GetShaderLocation(pbr_shader, "view");
+    pbr_shader.locs[SHADER_LOC_MATRIX_VIEW] = GetShaderLocation(pbr_shader, "matView");
+    pbr_shader.locs[SHADER_LOC_MATRIX_PROJECTION] = GetShaderLocation(pbr_shader, "matProjection");
+    pbr_shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(pbr_shader, "matModel");
     pbr_shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(pbr_shader, "camPos");
-    pbr_shader.locs[SHADER_LOC_MATRIX_PROJECTION] = GetShaderLocation(pbr_shader, "projection");
 }
 
 void ClosePBR() {
