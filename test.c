@@ -12,7 +12,7 @@
 int main() {
     SetTraceLogLevel(LOG_WARNING);
     SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT);
-    InitWindow(1080, 720, "raylib pbr");
+    InitWindow(1080, 720, "rlpbr");
     InitPBR();
 
     SetTargetFPS(60);
@@ -33,25 +33,22 @@ int main() {
                                           TEXTURE_FILTER_ANISOTROPIC_16X);
 
     AddLight((Light) {
-        .pos = (Vector3) {0, 1, 3}, .color = WHITE, .intensity = 20
+        .pos = (Vector3) {0, 1, 3}, .color = WHITE, .intensity = 20, .on = 1
     });
 
     while (!WindowShouldClose()) {
         UpdateCamera(&cam);
 
-        float cameraPos[3] = {cam.position.x, cam.position.y, cam.position.z};
-        SetShaderValue(helmet.materials[0].shader, helmet.materials[0].shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
-
         BeginDrawing();
 
         ClearBackground(BLACK);
 
-        BeginMode3D(cam);
+        BeginPBR(cam);
 
         DrawModel(helmet, (Vector3) {0, 0, 0}, 1, WHITE);
         DrawGrid(10, 1);
 
-        EndMode3D();
+        EndPBR();
 
         DrawFPS(0, 0);
 

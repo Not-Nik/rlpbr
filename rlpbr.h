@@ -16,10 +16,14 @@ typedef struct Light {
     Vector3 pos;
     Color color;
     float intensity;
+    int on;
 } Light;
 
 void InitPBR();
 void ClosePBR();
+
+void BeginPBR(Camera3D camera);
+void EndPBR();
 
 Material LoadPBRMaterial(const char *albedo_path,
                          const char *ao_path,
@@ -30,6 +34,9 @@ Material LoadPBRMaterial(const char *albedo_path,
 
 void *AddLight(Light light);
 void RemoveLight(void *light);
+
+void SetLight(void *light, Light new);
+Light GetLight(void *light);
 
 void EnableLight(void *light);
 void DisableLight(void *light);
