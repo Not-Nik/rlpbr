@@ -9,9 +9,10 @@
 
 #include "rlpbr.h"
 
+#ifdef BUNDLE_SHADERS
 #include "shaders.h"
+#endif
 
-#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
