@@ -208,6 +208,7 @@ Light GetLight(void *_light) {
     };
     res.intensity = light->intensity;
     res.on = light->on;
+    return res;
 }
 
 void SetOn(void *_light, int on) {
