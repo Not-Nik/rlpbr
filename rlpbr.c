@@ -96,6 +96,10 @@ Material LoadPBRMaterial(const char *albedo_path,
     return mat;
 }
 
+void MakeMaterialPBR(Material *mat) {
+    mat->shader = pbr_shader;
+}
+
 void UpdateLightAt(pbr_internal_light *light, int index) {
     char loc_str[32];
 

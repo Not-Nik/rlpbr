@@ -25,12 +25,15 @@ void ClosePBR();
 void BeginPBR(Camera3D camera);
 void EndPBR();
 
+/// Create PBR Material from several textures
 Material LoadPBRMaterial(const char *albedo_path,
                          const char *ao_path,
                          const char *metallic_path,
                          const char *normals_path,
                          const char *roughness_path,
                          TextureFilter filter_mode);
+// Apply PBR shader to material without changing its textures
+void MakeMaterialPBR(Material *mat);
 
 void *AddLight(Light light);
 void RemoveLight(void *light);
