@@ -141,7 +141,7 @@ void UpdateAllLights(bool clear_last) {
 }
 
 void *AddLight(Light light) {
-    pbr_internal_light *cur = NULL;
+    pbr_internal_light *cur = lights;
     int i = 0;
 
     if (!lights) {
