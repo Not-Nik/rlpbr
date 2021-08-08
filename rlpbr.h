@@ -12,6 +12,10 @@
 
 #include <raylib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct Light {
     Vector3 pos;
     Color color;
@@ -38,12 +42,16 @@ void MakeMaterialPBR(Material *mat);
 void *AddLight(Light light);
 void RemoveLight(void *light);
 
-void SetLight(void *light, Light new);
+void SetLight(void *light, Light new_light);
 Light GetLight(void *light);
 
 void EnableLight(void *light);
 void DisableLight(void *light);
 
 void UnloadPBRModel(Model pbr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //RLPBR_SRC_RLPBR_H_
