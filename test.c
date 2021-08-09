@@ -51,12 +51,13 @@ int main() {
 
         ClearBackground(BLACK);
 
-        BeginPBR(cam);
+        BeginMode3D(cam);
+        UpdatePBR(cam);
 
         DrawModel(helmet, (Vector3) {0, 0, 0}, 1, WHITE);
         DrawGrid(10, 1);
 
-        EndPBR();
+        EndMode3D();
 
         DrawFPS(0, 0);
 

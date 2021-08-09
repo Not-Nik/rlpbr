@@ -22,8 +22,8 @@ typedef enum LightType : int {
 
 typedef struct Light {
     Vector3 pos;
-    Color color;
     Vector3 target;
+    Color color;
     float intensity;
     LightType type;
     int on;
