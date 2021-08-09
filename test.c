@@ -33,7 +33,15 @@ int main() {
                                           TEXTURE_FILTER_ANISOTROPIC_16X);
 
     AddLight((Light) {
-        .pos = (Vector3) {0, 1, 3}, .color = WHITE, .intensity = 20, .on = 1
+        .pos = (Vector3) {0, 1, 3}, .color = RED, .target = (Vector3) {0}, .intensity = 20, .type = POINT, .on = 1
+    });
+
+    AddLight((Light) {
+        .pos = (Vector3) {-2, 5, 0}, .color = YELLOW, .target = (Vector3) {0, 1, 0}, .intensity = 1, .type = SPOT, .on = 1
+    });
+
+    AddLight((Light) {
+        .pos = (Vector3) {0, 1, 3}, .color = WHITE, .target = (Vector3) {1, -1, 1}, .intensity = 1, .type = SUN, .on = 1
     });
 
     while (!WindowShouldClose()) {

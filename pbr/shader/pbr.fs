@@ -13,10 +13,16 @@ uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D aoMap;
 
+#define LIGHT_POINT 1
+#define LIGHT_SPOT 2
+#define LIGHT_SUN 3
+
 struct Light {
     vec3 pos;
     vec3 color;
+    vec3 target;
     float intensity;
+    int type;
     int on;
 };
 
@@ -101,10 +107,19 @@ void main() {
     for(int i = 0; i < 100; ++i) {
         if (lights[i].on == 0) continue;
         // calculate per-light radiance
-        vec3 L = normalize(lights[i].pos - WorldPos);
-        float distance = length(lights[i].pos - WorldPos);
-        float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = lights[i].color * attenuation * lights[i].intensity;
+        vec3 L;
+        vec3 radiance = lights[i].color.rgb * lights[i].intensity;
+
+        if (lights[i].type == LIGHT_POINT) {
+            L = normalize(lights[i].pos - WorldPos);
+            float distance = length(lights[i].pos - WorldPos);
+            float attenuation = 1.0 / (distance * distance);
+            radiance *= attenuation;
+        } else if (lights[i].type == LIGHT_SPOT) {
+            L = -normalize(lights[i].target - lights[i].pos);
+        } else if (lights[i].type == LIGHT_SUN) {
+            L = -normalize(lights[i].target);
+        }
 
         // Cook-Torrance BRDF
         vec3 H = normalize(V + L);

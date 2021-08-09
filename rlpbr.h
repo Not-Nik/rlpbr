@@ -16,18 +16,23 @@
 extern "C" {
 #endif
 
+typedef enum LightType : int {
+    POINT = 1, SPOT = 2, SUN = 3
+} LightType;
+
 typedef struct Light {
     Vector3 pos;
     Color color;
+    Vector3 target;
     float intensity;
+    LightType type;
     int on;
 } Light;
 
 void InitPBR();
 void ClosePBR();
 
-void BeginPBR(Camera3D camera);
-void EndPBR();
+void UpdatePBR(Camera3D camera);
 
 /// Create PBR Material from several textures
 Material LoadPBRMaterial(const char *albedo_path,

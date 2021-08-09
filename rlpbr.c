@@ -24,7 +24,9 @@ Texture albedo, ao, metallic, normals, roughness;
 typedef struct pbr_internal_light {
     float pos[3];
     float color[3];
+    float target[3];
     float intensity;
+    int type;
     int on;
     struct pbr_internal_light *next, *prev;
 } pbr_internal_light;
@@ -33,7 +35,6 @@ pbr_internal_light *lights = NULL;
 pbr_internal_light empty = {0};
 
 void InitPBR() {
-
     #ifdef BUNDLE_SHADERS
     pbr_shader = LoadShaderFromMemory(pbr_vs, pbr_fs);
     #else
@@ -62,15 +63,9 @@ void ClosePBR() {
     UnloadShader(pbr_shader);
 }
 
-void BeginPBR(Camera3D camera) {
+void UpdatePBR(Camera3D camera) {
     float cameraPos[3] = {camera.position.x, camera.position.y, camera.position.z};
     SetShaderValue(pbr_shader, pbr_shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
-
-    BeginMode3D(camera);
-}
-
-void EndPBR() {
-    EndMode3D();
 }
 
 Material LoadPBRMaterial(const char *albedo_path,
@@ -116,8 +111,14 @@ void UpdateLightAt(pbr_internal_light *light, int index) {
     sprintf(loc_str, "lights[%i].color", index);
     SetShaderValue(pbr_shader, GetShaderLocation(pbr_shader, loc_str), light->color, SHADER_UNIFORM_VEC3);
 
+    sprintf(loc_str, "lights[%i].target", index);
+    SetShaderValue(pbr_shader, GetShaderLocation(pbr_shader, loc_str), light->target, SHADER_UNIFORM_VEC3);
+
     sprintf(loc_str, "lights[%i].intensity", index);
     SetShaderValue(pbr_shader, GetShaderLocation(pbr_shader, loc_str), &light->intensity, SHADER_UNIFORM_FLOAT);
+
+    sprintf(loc_str, "lights[%i].type", index);
+    SetShaderValue(pbr_shader, GetShaderLocation(pbr_shader, loc_str), &light->type, SHADER_UNIFORM_INT);
 
     sprintf(loc_str, "lights[%i].on", index);
     SetShaderValue(pbr_shader, GetShaderLocation(pbr_shader, loc_str), &light->on, SHADER_UNIFORM_INT);
@@ -147,6 +148,26 @@ void UpdateAllLights(bool clear_last) {
     }
 }
 
+void SetLightNoUpdate(void *_light, Light new) {
+    pbr_internal_light *light = _light;
+
+    light->pos[0] = new.pos.x;
+    light->pos[1] = new.pos.y;
+    light->pos[2] = new.pos.z;
+
+    light->color[0] = (float) new.color.r / 255.f;
+    light->color[1] = (float) new.color.g / 255.f;
+    light->color[2] = (float) new.color.b / 255.f;
+
+    light->target[0] = new.target.x;
+    light->target[1] = new.target.y;
+    light->target[2] = new.target.z;
+
+    light->intensity = new.intensity;
+    light->type = new.type;
+    light->on = new.on;
+}
+
 void *AddLight(Light light) {
     pbr_internal_light *cur = lights;
     int i = 0;
@@ -160,21 +181,14 @@ void *AddLight(Light light) {
             i++;
         }
 
+        i++;
         cur->next = RL_CALLOC(1, sizeof(pbr_internal_light));
         cur->next->prev = cur;
         cur = cur->next;
     }
 
     cur->pos[0] = light.pos.x;
-    cur->pos[1] = light.pos.y;
-    cur->pos[2] = light.pos.z;
-
-    cur->color[0] = (float) light.color.r / 255.f;
-    cur->color[1] = (float) light.color.g / 255.f;
-    cur->color[2] = (float) light.color.b / 255.f;
-
-    cur->intensity = light.intensity;
-    cur->on = light.on;
+    SetLightNoUpdate(cur, light);
 
     UpdateLightAt(cur, i);
     return cur;
@@ -189,20 +203,9 @@ void RemoveLight(void *_light) {
 }
 
 void SetLight(void *_light, Light new) {
-    pbr_internal_light *light = _light;
+    SetLightNoUpdate(_light, new);
 
-    light->pos[0] = new.pos.x;
-    light->pos[1] = new.pos.y;
-    light->pos[2] = new.pos.z;
-
-    light->color[0] = (float) new.color.r / 255.f;
-    light->color[1] = (float) new.color.g / 255.f;
-    light->color[2] = (float) new.color.b / 255.f;
-
-    light->intensity = new.intensity;
-    light->on = new.on;
-
-    UpdateLight(light);
+    UpdateLight(_light);
 }
 
 Light GetLight(void *_light) {
