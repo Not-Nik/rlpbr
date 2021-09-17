@@ -8,6 +8,7 @@
  * at https://mozilla.org/MPL/2.0/. */
 
 #include "rlpbr.h"
+#include "raymath.h"
 
 #ifdef BUNDLE_SHADERS
 #include "shaders.h"
@@ -50,6 +51,7 @@ void InitPBR() {
     pbr_shader.locs[SHADER_LOC_MATRIX_VIEW] = GetShaderLocation(pbr_shader, "matView");
     pbr_shader.locs[SHADER_LOC_MATRIX_PROJECTION] = GetShaderLocation(pbr_shader, "matProjection");
     pbr_shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(pbr_shader, "matModel");
+    pbr_shader.locs[SHADER_LOC_MATRIX_MVP] = GetShaderLocation(pbr_shader, "mvp");
     pbr_shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(pbr_shader, "camPos");
 
     albedo = LoadTextureFromImage(GenImageColor(1, 1, WHITE));
@@ -158,6 +160,8 @@ void SetLightNoUpdate(void *_light, Light new) {
     light->color[0] = (float) new.color.r / 255.f;
     light->color[1] = (float) new.color.g / 255.f;
     light->color[2] = (float) new.color.b / 255.f;
+
+    if (new.type == SUN) new.target = Vector3Normalize(new.target);
 
     light->target[0] = new.target.x;
     light->target[1] = new.target.y;

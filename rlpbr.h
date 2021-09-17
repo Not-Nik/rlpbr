@@ -12,6 +12,11 @@
 
 #include <raylib.h>
 
+
+#ifndef GRAPHICS_API_OPENGL_33
+#error OpenGL 3.3 is required for rlpbr to function properly
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -32,16 +32,19 @@ int main() {
                                           "pbr/model/trooper_roughness.png",
                                           TEXTURE_FILTER_ANISOTROPIC_16X);
 
-    AddLight((Light) {
-        .pos = (Vector3) {0, 1, 3}, .color = RED, .target = (Vector3) {0}, .intensity = 20, .type = POINT, .on = 1
+    Model floor = LoadModelFromMesh(GenMeshPlane(10, 10, 1, 1));
+    floor.materials[0] = LoadPBRMaterial(0, 0, 0, 0, 0, TEXTURE_FILTER_POINT);
+
+    void *point = AddLight((Light) {
+        .pos = (Vector3) {0, 1, 4}, .color = RED, .target = (Vector3) {0}, .intensity = 20, .type = POINT, .on = 1
     });
 
-    AddLight((Light) {
-        .pos = (Vector3) {-2, 5, 0}, .color = YELLOW, .target = (Vector3) {0, 1, 0}, .intensity = 1, .type = SPOT, .on = 1
+    void *spot = AddLight((Light) {
+        .pos = (Vector3) {-2, 4, -1}, .color = YELLOW, .target = (Vector3) {0, 1, 0}, .intensity = 20, .type = SPOT, .on = 1
     });
 
-    AddLight((Light) {
-        .pos = (Vector3) {0, 1, 3}, .color = WHITE, .target = (Vector3) {1, -1, 1}, .intensity = 1, .type = SUN, .on = 1
+    void *sun = AddLight((Light) {
+        .pos = (Vector3) {0}, .color = PURPLE, .target = (Vector3) {1, 1, -2}, .intensity = 1, .type = SUN, .on = 1
     });
 
     while (!WindowShouldClose()) {
@@ -54,6 +57,7 @@ int main() {
         BeginMode3D(cam);
         UpdatePBR(cam);
 
+        DrawModel(floor, (Vector3) {0, 0, 0}, 1, WHITE);
         DrawModel(helmet, (Vector3) {0, 0, 0}, 1, WHITE);
         DrawGrid(10, 1);
 

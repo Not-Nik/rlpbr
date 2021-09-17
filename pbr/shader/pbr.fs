@@ -1,8 +1,8 @@
 #version 330 core
 
-in vec2 TexCoords;
-in vec3 WorldPos;
-in vec3 Normal;
+in vec2 tex_coords;
+in vec3 vert_pos;
+in vec3 vert_norm;
 
 out vec4 FragColor;
 
@@ -35,14 +35,14 @@ uniform vec3 camPos;
 const float PI = 3.14159265359;
 
 vec3 GetNormalFromMap() {
-    vec3 tangentNormal = texture(normalMap, TexCoords).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(normalMap, tex_coords).xyz * 2.0 - 1.0;
 
-    vec3 Q1  = dFdx(WorldPos);
-    vec3 Q2  = dFdy(WorldPos);
-    vec2 st1 = dFdx(TexCoords);
-    vec2 st2 = dFdy(TexCoords);
+    vec3 Q1  = dFdx(vert_pos);
+    vec3 Q2  = dFdy(vert_pos);
+    vec2 st1 = dFdx(tex_coords);
+    vec2 st2 = dFdy(tex_coords);
 
-    vec3 N   = normalize(Normal);
+    vec3 N   = normalize(vert_norm);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
@@ -87,13 +87,13 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0) {
 }
 // ----------------------------------------------------------------------------
 void main() {
-    vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
-    float metallic  = texture(metallicMap, TexCoords).r;
-    float roughness = texture(roughnessMap, TexCoords).r;
-    float ao        = texture(aoMap, TexCoords).r;
+    vec3 albedo     = pow(texture(albedoMap, tex_coords).rgb, vec3(2.2));
+    float metallic  = texture(metallicMap, tex_coords).r;
+    float roughness = texture(roughnessMap, tex_coords).r;
+    float ao        = texture(aoMap, tex_coords).r;
 
     vec3 N = GetNormalFromMap();
-    vec3 V = normalize(camPos - WorldPos);
+    vec3 V = normalize(camPos - vert_pos);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -111,14 +111,17 @@ void main() {
         vec3 radiance = lights[i].color.rgb * lights[i].intensity;
 
         if (lights[i].type == LIGHT_POINT) {
-            L = normalize(lights[i].pos - WorldPos);
-            float distance = length(lights[i].pos - WorldPos);
+            L = normalize(lights[i].pos - vert_pos);
+            float distance = length(lights[i].pos - vert_pos);
             float attenuation = 1.0 / (distance * distance);
             radiance *= attenuation;
         } else if (lights[i].type == LIGHT_SPOT) {
             L = -normalize(lights[i].target - lights[i].pos);
+            float distance = length(lights[i].pos - vert_pos);
+            float attenuation = 1.0 / (distance * distance);
+            radiance *= attenuation;
         } else if (lights[i].type == LIGHT_SUN) {
-            L = -normalize(lights[i].target);
+            L = normalize(lights[i].target);
         }
 
         // Cook-Torrance BRDF
